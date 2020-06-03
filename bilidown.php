@@ -88,8 +88,8 @@ downloadUrlToFile($downInfo->data->durl[--$page]->url, $fileName);
 
 
 echo "\033[1;32;5;9mDone √\e[0m\n" . PHP_EOL;
-if(defined(FFMPEG)){
-    "Would you like to convert the video to mp4? (yes/no)>";
+if(FFMPEG){
+    echo "Would you like to convert the video to mp4? (yes/no)>";
     if(trim(fgets(STDIN)) != "no"){
         shell_exec("ffmpeg -i $fileName -vcodec copy -acodec copy $fileName.mp4");
     }
