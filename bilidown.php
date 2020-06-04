@@ -46,41 +46,48 @@ if(!trim(fgets(STDIN))){
     //Av号
     echo "Input Av number (Integer only) >";
     $aid = trim(fgets(STDIN));
+	if(!$aid)
+		exit("\033[1;38;5;9mFailed: Something went wrong\e[0m\n" . PHP_EOL);
     $getInfo = getAPI(API_VIEW, ["aid" => $aid]);
 }else{
     //Bv号
     echo "Input Bv number >";
     $bvid = trim(fgets(STDIN));
+	if(!$bvid)
+		exit("\033[1;38;5;9mFailed: Something went wrong\e[0m\n" . PHP_EOL);
     $getInfo = getAPI(API_VIEW, ["bvid" => $bvid]);
 }
 
-$cid = $getInfo->data->cid;
+echo PHP_EOL. "Video title: " . $getInfo->data->title . PHP_EOL;
+echo "Video uploader: " . $getInfo->data->owner->name . PHP_EOL;
+echo "Video description: “" . $getInfo->data->desc . "”" . PHP_EOL;
+
+echo "Video includes [" . count((array)$getInfo->data->pages) . "] Pages" . PHP_EOL;
+echo "Which page would you like to download? >";
+$page = trim(fgets(STDIN));
+if(!$page){
+    $page = 0;
+}else{
+    $page--;
+}
+
+$cid = $getInfo->data->pages[$page]->cid;
+
 $bvid = $getInfo->data->bvid;
 if($cid == ""){
     exit("\033[1;38;5;9mFailed: Something went wrong\e[0m\n" . PHP_EOL);
 }
 
-echo PHP_EOL. "Video title: " . $getInfo->data->title . PHP_EOL;
 echo "Video Cid: " . $cid . PHP_EOL;
-echo "Video uploader: " . $getInfo->data->owner->name . PHP_EOL;
-echo "Video description: “" . $getInfo->data->desc . "”" . PHP_EOL;
 
 $downInfo = getAPI(API_PLAY, ["bvid"=>$bvid, "cid"=>$cid]);
 echo "Video accept quality:". json_encode($downInfo->data->accept_quality). PHP_EOL;
 echo "Choose download quality >";
 $qn = trim(fgets(STDIN));
 $downInfo = getAPI(API_PLAY, ["bvid"=>$bvid, "cid"=>$cid, "qn"=>$qn]);
-//echo "Video includes [" . count($downInfo->data->durl) . "] Pages" . PHP_EOL;
-//统计不准，懒得写了
-//echo "Which 分p would you like to download? >"; //中文过草
-// $page = trim(fgets(STDIN));
-// if(!$page){
-//     $page = 0;
-// }else{
-//     $page--;
-// }
-$page = 0;
-var_dump($downInfo->data->durl[$page]->url);
+
+
+var_dump($downInfo->data);
 echo "\n Everything is OK, press enter to start downloading >";
 fgets(STDIN);
 $fileName = $bvid."[" . ++$page . "].flv";
