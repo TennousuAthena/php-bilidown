@@ -114,6 +114,8 @@ if(FFMPEG){
 
 }
 
+exit("\033[1;32;5;9mSee You~\e[0m\n" . PHP_EOL");
+
 function downloadUrlToFile($url, $outFileName, $wget = false)
 {   
     if($wget){
@@ -137,7 +139,7 @@ function downloadUrlToFile($url, $outFileName, $wget = false)
         }
     }
 	if(file_exists($outFileName))
-		echo "\n \033[1;32;5;9mDownloaded $outFileName Successfully √\e[0m\n" . PHP_EOL;
+		echo "\n \033[1;32;5;9mDownload $outFileName Successfully √\e[0m\n" . PHP_EOL;
 	return 0;
 }
 function getAPI($url, $query=[], $cookies=""){
