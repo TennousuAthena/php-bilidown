@@ -114,7 +114,7 @@ if(FFMPEG){
 
 }
 
-exit("\033[1;32;5;9mSee You~\e[0m\n" . PHP_EOL");
+exit("\033[1;32;5;9mSee You~\e[0m\n" . PHP_EOL);
 
 function downloadUrlToFile($url, $outFileName, $wget = false)
 {   
