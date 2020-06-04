@@ -1,5 +1,6 @@
 <?php
 
+$win=0;
 if(strtoupper(substr(PHP_OS,0,3))==='WIN'){
     //是Win酱！
     exec("chcp 65001");
@@ -88,10 +89,20 @@ $downInfo = getAPI(API_PLAY, ["bvid"=>$bvid, "cid"=>$cid, "qn"=>$qn]);
 
 
 var_dump($downInfo->data);
+
+$method = "p";
+if(!$win){
+	echo "\n Download with System curl or Php libraries? [S/p]";
+	$method = strtolower(trim(fgets(STDIN)));
+	if(!$method)
+		$method = "s";
+}
+
+
 echo "\n Everything is OK, press enter to start downloading >";
 fgets(STDIN);
 $fileName = $bvid."[" . ++$page . "].flv";
-downloadUrlToFile($downInfo->data->durl[--$page]->url, $fileName);
+downloadUrlToFile($downInfo->data->durl[--$page]->url, $fileName, $method=="s"?1:0);
 
 
 echo "\033[1;32;5;9mDone √\e[0m\n" . PHP_EOL;
@@ -106,7 +117,7 @@ if(FFMPEG){
 function downloadUrlToFile($url, $outFileName, $wget = false)
 {   
     if($wget){
-        // shell_exec("curl -o $outFileName -A \"User-Agent: BiliDown/1.1 (+https://github.com/TennousuAthena/php-bilidown)\" -e \"https://www.bilibili.com/\" $url");
+        shell_exec("curl -o $outFileName -A \"User-Agent: BiliDown/1.1 (+https://github.com/TennousuAthena/php-bilidown)\" -e \"https://www.bilibili.com/\" \"$url\"");
     }else{
         if(is_file($url)) {
             copy($url, $outFileName); 
@@ -125,6 +136,9 @@ function downloadUrlToFile($url, $outFileName, $wget = false)
             curl_close($ch);
         }
     }
+	if(file_exists($outFileName))
+		echo "\n \033[1;32;5;9mDownloaded $outFileName Successfully √\e[0m\n" . PHP_EOL;
+	return 0;
 }
 function getAPI($url, $query=[], $cookies=""){
     $url = $url."?".http_build_query($query);
